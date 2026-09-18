@@ -181,6 +181,18 @@ Deploy the Docker image on any public service that supports environment variable
 4. Verify `/health` and `/optimize-energy` from outside the development network.
 5. Keep the endpoint and model quota available throughout judging.
 
+### Vercel
+
+Vercel loads the FastAPI application through the explicit `app.main:app`
+entrypoint in `pyproject.toml`. Configure the environment variables from
+`.env.example` in the Vercel project settings, redeploy, and test:
+
+```text
+https://YOUR-DEPLOYMENT.vercel.app/          -> redirects to /docs
+https://YOUR-DEPLOYMENT.vercel.app/health    -> {"status":"ok"}
+https://YOUR-DEPLOYMENT.vercel.app/docs      -> interactive API documentation
+```
+
 After deployment, verify the public service against the official sample pack:
 
 ```powershell

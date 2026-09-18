@@ -2,13 +2,19 @@
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 
 from app.interpreter import InterpretationError, interpret_notes
 from app.pipeline import run_pipeline
 from app.schemas import HealthResponse, OptimizeEnergyRequest, OptimizeEnergyResponse
 
 app = FastAPI(title="GridPilot AI", version="0.1.0")
+
+
+@app.get("/", include_in_schema=False)
+def root() -> RedirectResponse:
+    """Send visitors at the deployment root to the interactive API docs."""
+    return RedirectResponse(url="/docs")
 
 
 @app.exception_handler(RequestValidationError)
