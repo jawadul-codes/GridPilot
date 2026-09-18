@@ -181,6 +181,25 @@ Deploy the Docker image on any public service that supports environment variable
 4. Verify `/health` and `/optimize-energy` from outside the development network.
 5. Keep the endpoint and model quota available throughout judging.
 
+After deployment, verify the public service against the official sample pack:
+
+```powershell
+python -m scripts.verify_deployment `
+  "https://YOUR-PUBLIC-BASE-URL" `
+  "PATH_TO_PUBLIC_SAMPLE_CASES.json" `
+  --rounds 3
+```
+
+This checks external health, interpretation ground truth, schedule replay, totals,
+failure rate, and p50/p95/max latency. Three rounds make 30 model-backed requests.
+
+Before making the repository public, scan tracked files and Git history without
+printing any discovered credential values:
+
+```powershell
+python -m scripts.scan_secrets
+```
+
 ## Known limitations
 
 - Availability and latency depend on the configured model provider.
