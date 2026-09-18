@@ -54,13 +54,10 @@ def build_schedule(request: OptimizeEnergyRequest, interpretations: list[Directi
     discharge = pulp.LpVariable.dicts("battery_discharge", hours, lowBound=0)
     energy = pulp.LpVariable.dicts("battery_energy_after", hours, lowBound=0)
     charging = pulp.LpVariable.dicts("is_charging", hours, cat=pulp.LpBinary)
-    peak_grid = pulp.LpVariable("peak_grid", lowBound=0)
-    total_cost = pulp.lpSum(grid[h] * data[h].tariff_bdt_per_kwh for h in hours)
-    model += total_cost
+    model += pulp.lpSum(grid[h] * data[h].tariff_bdt_per_kwh for h in hours)
     for hour in hours:
         entry = data[hour]
         model += grid[hour] + solar[hour] + discharge[hour] == entry.demand_kwh + charge[hour]
-        model += grid[hour] <= peak_grid
         model += solar[hour] <= entry.solar_kwh * factors[hour]
         model += energy[hour] >= max(battery.minimum_energy_kwh, extra_reserves[hour])
         model += energy[hour] <= battery.capacity_kwh
@@ -77,16 +74,6 @@ def build_schedule(request: OptimizeEnergyRequest, interpretations: list[Directi
     status = model.solve(pulp.PULP_CBC_CMD(msg=False))
     if pulp.LpStatus[status] != "Optimal":
         raise ValueError(f"No feasible optimal schedule: {pulp.LpStatus[status]}")
-
-    # The contest's primary objective is cost. When several schedules have the
-    # same optimum cost, choose the one with the smallest peak grid draw. This
-    # makes outputs deterministic and aligns with the supplied public plans.
-    optimal_cost = float(pulp.value(total_cost))
-    model += total_cost <= optimal_cost + EPSILON
-    model.setObjective(peak_grid)
-    status = model.solve(pulp.PULP_CBC_CMD(msg=False))
-    if pulp.LpStatus[status] != "Optimal":
-        raise ValueError(f"No feasible peak-minimized schedule: {pulp.LpStatus[status]}")
 
     def value(variable: pulp.LpVariable) -> float:
         result = float(pulp.value(variable))
