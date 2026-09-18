@@ -3,12 +3,23 @@ import time
 
 from fastapi.testclient import TestClient
 
+import index
 from app import main
 from app.main import app
 from app.schemas import DirectiveInterpretation
 
 
 client = TestClient(app)
+
+
+def test_vercel_entrypoint_exports_fastapi_app() -> None:
+    assert index.app is app
+
+
+def test_root_redirects_to_docs() -> None:
+    response = client.get("/", follow_redirects=False)
+    assert response.status_code == 307
+    assert response.headers["location"] == "/docs"
 
 
 def test_health() -> None:

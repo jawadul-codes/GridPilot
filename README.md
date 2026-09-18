@@ -16,6 +16,10 @@ POST /optimize-energy
   -> canonical JSON response
 ```
 
+`app/pipeline.py` is the explicit integration boundary between interpretation and
+optimization. It guarantees that model output is guardrailed before optimization
+and that the optimized schedule is replayed before serialization.
+
 The LLM only interprets language. Deterministic code validates its output before
 the optimizer uses it. The returned schedule is replayed independently before it
 is returned.
@@ -176,6 +180,39 @@ Deploy the Docker image on any public service that supports environment variable
 3. Keep the start command from the Dockerfile.
 4. Verify `/health` and `/optimize-energy` from outside the development network.
 5. Keep the endpoint and model quota available throughout judging.
+
+### Vercel
+
+Vercel can discover the FastAPI application from the root `index.py` module and
+the explicit `app.main:app` entrypoint in `pyproject.toml`. Runtime dependencies
+are declared in both `pyproject.toml` and `requirements.txt`, and
+`.python-version` pins Python 3.12. Configure the environment variables from
+`.env.example` in the Vercel project settings, redeploy, and test:
+
+```text
+https://YOUR-DEPLOYMENT.vercel.app/          -> redirects to /docs
+https://YOUR-DEPLOYMENT.vercel.app/health    -> {"status":"ok"}
+https://YOUR-DEPLOYMENT.vercel.app/docs      -> interactive API documentation
+```
+
+After deployment, verify the public service against the official sample pack:
+
+```powershell
+python -m scripts.verify_deployment `
+  "https://YOUR-PUBLIC-BASE-URL" `
+  "PATH_TO_PUBLIC_SAMPLE_CASES.json" `
+  --rounds 3
+```
+
+This checks external health, interpretation ground truth, schedule replay, totals,
+failure rate, and p50/p95/max latency. Three rounds make 30 model-backed requests.
+
+Before making the repository public, scan tracked files and Git history without
+printing any discovered credential values:
+
+```powershell
+python -m scripts.scan_secrets
+```
 
 ## Known limitations
 
