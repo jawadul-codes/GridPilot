@@ -1,5 +1,4 @@
 .git
-<<<<<<< Updated upstream
 .github
 .venv
 venv
@@ -9,16 +8,7 @@ __pycache__
 tests
 examples
 *.pyc
-=======
-.env
-.venv
-venv
-__pycache__
-*.py[cod]
-.pytest_cache
 .coverage
 htmlcov
-tests
-examples
->>>>>>> Stashed changes
+*.py[cod]
 *.log

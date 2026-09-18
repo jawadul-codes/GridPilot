@@ -16,35 +16,11 @@ POST /optimize-energy
   -> canonical JSON response
 ```
 
-<<<<<<< Updated upstream
 The LLM only interprets language. Deterministic code validates its output before
 the optimizer uses it. The returned schedule is replayed independently before it
 is returned.
 
 ## Requirements
-=======
-Run the test suite with:
-
-```bash
-pytest -q
-```
-
-## Optimizer
-
-The optimizer uses PuLP/CBC to minimize tariff-weighted grid cost across the 24-hour horizon. It applies validated directives before solving, then independently replays energy balance, effective solar, battery state/rates/bounds, directives, and end-of-day neutrality.
-
-## Docker fallback
-
-```bash
-docker build -t gridpilot-ai:local .
-docker run --rm -p 8000:8000 --env-file .env gridpilot-ai:local
-curl http://localhost:8000/health
-```
-
-The health response must be `{"status":"ok"}`. Never put credentials in the image, repository, or command history; use `.env` locally or your deployment platform's secret manager.
-
-The service exposes `GET /health` and an integration-pending `POST /optimize-energy` endpoint. The optimizer and replay validator are implemented; endpoint wiring and the LLM interpreter remain the API track's integration work.
->>>>>>> Stashed changes
 
 - Python 3.12+
 - An OpenAI-compatible model endpoint supporting Chat Completions structured output
@@ -125,6 +101,10 @@ To run a live provider smoke test, configure `.env`, start the service, and send
 `examples/sample_request.json`. Do not run it repeatedly unless you intend to consume
 provider quota.
 
+The optimizer uses PuLP/CBC to minimize tariff-weighted grid cost across the
+24-hour horizon. It independently replays effective solar, energy balance,
+battery bounds/rates, directives, and end-of-day neutrality before returning a plan.
+
 Validate all official public sample cases using their reference interpretations:
 
 ```powershell
@@ -157,6 +137,35 @@ curl.exe http://localhost:8000/health
 
 The image binds to `0.0.0.0:8000` and includes a container health check. Secrets are
 provided at runtime and are excluded from the build context.
+
+### Published fallback image
+
+The contest fallback image is published on Docker Hub:
+
+```text
+closedgates/gridplot:bup-cse-fest-2026
+closedgates/gridplot@sha256:93e47fb732e5b61bcec27cdb55f798f1b2868bf196a87c9474a74fa5d7d78709
+```
+
+To publish a replacement image before submission, authenticate with Docker Hub,
+then update the tag and digest after a successful push:
+
+```powershell
+docker tag gridpilot-ai:latest closedgates/gridplot:bup-cse-fest-2026
+docker push closedgates/gridplot:bup-cse-fest-2026
+docker inspect --format='{{index .RepoDigests 0}}' closedgates/gridplot:bup-cse-fest-2026
+```
+
+Record the resulting digest in your submission and keep that image public and
+pullable throughout evaluation. Organizers can run it with:
+
+```powershell
+docker pull closedgates/gridplot@sha256:93e47fb732e5b61bcec27cdb55f798f1b2868bf196a87c9474a74fa5d7d78709
+docker run --rm -p 8000:8000 --env-file .env closedgates/gridplot@sha256:93e47fb732e5b61bcec27cdb55f798f1b2868bf196a87c9474a74fa5d7d78709
+```
+
+The required runtime variables are `LLM_API_KEY`, `LLM_MODEL`, `LLM_BASE_URL`,
+`REQUEST_TIMEOUT_SECONDS`, `LLM_MAX_ATTEMPTS`, and `LLM_RETRY_BASE_SECONDS`.
 
 ## Deployment
 
