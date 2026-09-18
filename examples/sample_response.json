@@ -1,0 +1,56 @@
+{
+  "scenario_id": "campus-demo-001",
+  "interpretations": [
+    {
+      "note_index": 0,
+      "applies": true,
+      "directive_type": "solar_reduction",
+      "structured_adjustment": {"hours": [13, 14], "factor": 0.2},
+      "explanation": "Only 20% of forecast solar is available from 1 PM until 3 PM."
+    },
+    {
+      "note_index": 1,
+      "applies": true,
+      "directive_type": "no_charge_window",
+      "structured_adjustment": {"hours": [18, 19]},
+      "explanation": "Battery charging is prohibited from 6 PM until 8 PM."
+    },
+    {
+      "note_index": 2,
+      "applies": false,
+      "directive_type": "no_op",
+      "structured_adjustment": null,
+      "explanation": "The note does not impose an energy scheduling constraint."
+    }
+  ],
+  "hourly_plan": [
+    {"hour": 0, "grid_kwh": 10, "solar_used_kwh": 0, "battery_action": "idle", "battery_kwh": 0, "battery_energy_after_kwh": 20},
+    {"hour": 1, "grid_kwh": 10, "solar_used_kwh": 0, "battery_action": "idle", "battery_kwh": 0, "battery_energy_after_kwh": 20},
+    {"hour": 2, "grid_kwh": 10, "solar_used_kwh": 0, "battery_action": "idle", "battery_kwh": 0, "battery_energy_after_kwh": 20},
+    {"hour": 3, "grid_kwh": 10, "solar_used_kwh": 0, "battery_action": "idle", "battery_kwh": 0, "battery_energy_after_kwh": 20},
+    {"hour": 4, "grid_kwh": 10, "solar_used_kwh": 0, "battery_action": "idle", "battery_kwh": 0, "battery_energy_after_kwh": 20},
+    {"hour": 5, "grid_kwh": 10, "solar_used_kwh": 0, "battery_action": "idle", "battery_kwh": 0, "battery_energy_after_kwh": 20},
+    {"hour": 6, "grid_kwh": 10, "solar_used_kwh": 0, "battery_action": "idle", "battery_kwh": 0, "battery_energy_after_kwh": 20},
+    {"hour": 7, "grid_kwh": 10, "solar_used_kwh": 0, "battery_action": "idle", "battery_kwh": 0, "battery_energy_after_kwh": 20},
+    {"hour": 8, "grid_kwh": 10, "solar_used_kwh": 0, "battery_action": "idle", "battery_kwh": 0, "battery_energy_after_kwh": 20},
+    {"hour": 9, "grid_kwh": 10, "solar_used_kwh": 0, "battery_action": "idle", "battery_kwh": 0, "battery_energy_after_kwh": 20},
+    {"hour": 10, "grid_kwh": 10, "solar_used_kwh": 0, "battery_action": "idle", "battery_kwh": 0, "battery_energy_after_kwh": 20},
+    {"hour": 11, "grid_kwh": 10, "solar_used_kwh": 0, "battery_action": "idle", "battery_kwh": 0, "battery_energy_after_kwh": 20},
+    {"hour": 12, "grid_kwh": 10, "solar_used_kwh": 0, "battery_action": "idle", "battery_kwh": 0, "battery_energy_after_kwh": 20},
+    {"hour": 13, "grid_kwh": 10, "solar_used_kwh": 0, "battery_action": "idle", "battery_kwh": 0, "battery_energy_after_kwh": 20},
+    {"hour": 14, "grid_kwh": 10, "solar_used_kwh": 0, "battery_action": "idle", "battery_kwh": 0, "battery_energy_after_kwh": 20},
+    {"hour": 15, "grid_kwh": 10, "solar_used_kwh": 0, "battery_action": "idle", "battery_kwh": 0, "battery_energy_after_kwh": 20},
+    {"hour": 16, "grid_kwh": 10, "solar_used_kwh": 0, "battery_action": "idle", "battery_kwh": 0, "battery_energy_after_kwh": 20},
+    {"hour": 17, "grid_kwh": 10, "solar_used_kwh": 0, "battery_action": "idle", "battery_kwh": 0, "battery_energy_after_kwh": 20},
+    {"hour": 18, "grid_kwh": 10, "solar_used_kwh": 0, "battery_action": "idle", "battery_kwh": 0, "battery_energy_after_kwh": 20},
+    {"hour": 19, "grid_kwh": 10, "solar_used_kwh": 0, "battery_action": "idle", "battery_kwh": 0, "battery_energy_after_kwh": 20},
+    {"hour": 20, "grid_kwh": 10, "solar_used_kwh": 0, "battery_action": "idle", "battery_kwh": 0, "battery_energy_after_kwh": 20},
+    {"hour": 21, "grid_kwh": 10, "solar_used_kwh": 0, "battery_action": "idle", "battery_kwh": 0, "battery_energy_after_kwh": 20},
+    {"hour": 22, "grid_kwh": 10, "solar_used_kwh": 0, "battery_action": "idle", "battery_kwh": 0, "battery_energy_after_kwh": 20},
+    {"hour": 23, "grid_kwh": 10, "solar_used_kwh": 0, "battery_action": "idle", "battery_kwh": 0, "battery_energy_after_kwh": 20}
+  ],
+  "total_grid_kwh": 240,
+  "total_cost_bdt": 1920,
+  "peak_grid_kwh": 10,
+  "summary": "Demand is supplied entirely from the grid while the battery remains neutral."
+}

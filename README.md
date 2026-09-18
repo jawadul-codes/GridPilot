@@ -13,3 +13,5 @@ uvicorn app.main:app --reload
 Run the test suite with `pytest`.
 
 The service exposes `GET /health` and a scaffolded `POST /optimize-energy` endpoint. The interpretation, optimization, and replay-validation modules are ready for implementation.
+
+The shared API contract is defined in `app/schemas.py`. Integration examples are available in `examples/sample_request.json` and `examples/sample_response.json`.
