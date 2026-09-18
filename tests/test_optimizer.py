@@ -62,3 +62,25 @@ def test_multiple_directives_compose() -> None:
                   directive("minimum_battery_reserve", {"hours": [18], "minimum_energy_kwh": 8})]
     plan = build_schedule(scenario, directives)
     validate_schedule(scenario, directives, plan)
+
+
+def test_overlapping_solar_reductions_multiply_and_grid_caps_hold() -> None:
+    scenario = request()
+    directives = [
+        directive("solar_reduction", {"hours": [12], "factor": 0.5}),
+        directive("solar_reduction", {"hours": [12], "factor": 0.5}),
+        directive("max_grid_window", {"hours": [12], "max_grid_kwh": 7}),
+    ]
+    plan = build_schedule(scenario, directives)
+    validate_schedule(scenario, directives, plan)
+    assert plan[12].solar_used_kwh <= 3.0 + 0.01
+    assert plan[12].grid_kwh <= 7.0 + 0.01
+
+
+def test_totals_match_plan_within_contest_precision() -> None:
+    scenario = request()
+    plan = build_schedule(scenario, [])
+    total_grid, total_cost, peak = schedule_totals(scenario, plan)
+    assert total_grid == pytest.approx(sum(item.grid_kwh for item in plan), abs=0.01)
+    assert total_cost == pytest.approx(sum(item.grid_kwh * scenario.hourly_data[item.hour].tariff_bdt_per_kwh for item in plan), abs=0.01)
+    assert peak == pytest.approx(max(item.grid_kwh for item in plan), abs=0.01)

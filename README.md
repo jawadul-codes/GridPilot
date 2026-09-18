@@ -16,11 +16,35 @@ POST /optimize-energy
   -> canonical JSON response
 ```
 
+<<<<<<< Updated upstream
 The LLM only interprets language. Deterministic code validates its output before
 the optimizer uses it. The returned schedule is replayed independently before it
 is returned.
 
 ## Requirements
+=======
+Run the test suite with:
+
+```bash
+pytest -q
+```
+
+## Optimizer
+
+The optimizer uses PuLP/CBC to minimize tariff-weighted grid cost across the 24-hour horizon. It applies validated directives before solving, then independently replays energy balance, effective solar, battery state/rates/bounds, directives, and end-of-day neutrality.
+
+## Docker fallback
+
+```bash
+docker build -t gridpilot-ai:local .
+docker run --rm -p 8000:8000 --env-file .env gridpilot-ai:local
+curl http://localhost:8000/health
+```
+
+The health response must be `{"status":"ok"}`. Never put credentials in the image, repository, or command history; use `.env` locally or your deployment platform's secret manager.
+
+The service exposes `GET /health` and an integration-pending `POST /optimize-energy` endpoint. The optimizer and replay validator are implemented; endpoint wiring and the LLM interpreter remain the API track's integration work.
+>>>>>>> Stashed changes
 
 - Python 3.12+
 - An OpenAI-compatible model endpoint supporting Chat Completions structured output
