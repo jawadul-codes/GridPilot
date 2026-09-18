@@ -1,6 +1,8 @@
 """GridPilot AI FastAPI application."""
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
 
 from app.guardrails import validate_interpretations
 from app.interpreter import InterpretationError, interpret_notes
@@ -9,6 +11,22 @@ from app.schemas import HealthResponse, OptimizeEnergyRequest, OptimizeEnergyRes
 from app.validator import validate_schedule
 
 app = FastAPI(title="GridPilot AI", version="0.1.0")
+
+
+@app.exception_handler(RequestValidationError)
+async def request_validation_error(
+    request: Request, exc: RequestValidationError
+) -> JSONResponse:
+    """Use the challenge-required 400 for malformed/structurally invalid JSON."""
+    del request
+    errors = []
+    for error in exc.errors():
+        errors.append({
+            "type": error.get("type"),
+            "loc": list(error.get("loc", ())),
+            "msg": error.get("msg", "Invalid request"),
+        })
+    return JSONResponse(status_code=400, content={"detail": errors})
 
 
 @app.get("/health", response_model=HealthResponse)

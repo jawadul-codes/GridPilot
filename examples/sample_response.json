@@ -1,6 +1,6 @@
 {
   "scenario_id": "campus-demo-001",
-  "interpretations": [
+  "directive_interpretation": [
     {
       "note_index": 0,
       "applies": true,
@@ -52,5 +52,5 @@
   "total_grid_kwh": 240,
   "total_cost_bdt": 1920,
   "peak_grid_kwh": 10,
-  "summary": "Demand is supplied entirely from the grid while the battery remains neutral."
+  "plan_summary": "Demand is supplied entirely from the grid while the battery remains neutral."
 }

@@ -9,7 +9,9 @@ class Settings(BaseSettings):
     llm_api_key: str = ""
     llm_model: str = ""
     llm_base_url: str = "https://api.openai.com/v1"
-    request_timeout_seconds: float = 25.0
+    request_timeout_seconds: float = 8.0
+    llm_max_attempts: int = 2
+    llm_retry_base_seconds: float = 0.25
 
 
 settings = Settings()

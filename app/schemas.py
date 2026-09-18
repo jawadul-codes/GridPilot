@@ -5,7 +5,7 @@ from __future__ import annotations
 from enum import Enum
 from typing import Annotated, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, StringConstraints, model_validator
+from pydantic import AliasChoices, BaseModel, ConfigDict, Field, StringConstraints, model_validator
 
 NonEmptyString = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1)]
 FiniteNonNegative = Annotated[float, Field(ge=0, allow_inf_nan=False)]
@@ -15,7 +15,7 @@ Hour = Annotated[int, Field(ge=0, le=23)]
 class StrictModel(BaseModel):
     """Base model that rejects undocumented input and non-finite numbers."""
 
-    model_config = ConfigDict(extra="forbid", allow_inf_nan=False)
+    model_config = ConfigDict(extra="forbid", allow_inf_nan=False, populate_by_name=True)
 
 
 class HealthResponse(StrictModel):
@@ -33,8 +33,14 @@ class BatteryConfig(StrictModel):
     capacity_kwh: Annotated[float, Field(gt=0, allow_inf_nan=False)]
     initial_energy_kwh: FiniteNonNegative
     minimum_energy_kwh: FiniteNonNegative
-    max_charge_kwh: FiniteNonNegative
-    max_discharge_kwh: FiniteNonNegative
+    max_charge_kwh: FiniteNonNegative = Field(
+        validation_alias=AliasChoices("max_charge_kwh_per_hour", "max_charge_kwh"),
+        serialization_alias="max_charge_kwh_per_hour",
+    )
+    max_discharge_kwh: FiniteNonNegative = Field(
+        validation_alias=AliasChoices("max_discharge_kwh_per_hour", "max_discharge_kwh"),
+        serialization_alias="max_discharge_kwh_per_hour",
+    )
 
     @model_validator(mode="after")
     def validate_energy_bounds(self) -> BatteryConfig:
@@ -50,7 +56,15 @@ class BatteryConfig(StrictModel):
 class OptimizeEnergyRequest(StrictModel):
     scenario_id: NonEmptyString
     operator_notes: Annotated[list[NonEmptyString], Field(min_length=1, max_length=3)]
-    hourly_data: Annotated[list[HourlyInput], Field(min_length=24, max_length=24)]
+    hourly_data: Annotated[
+        list[HourlyInput],
+        Field(
+            min_length=24,
+            max_length=24,
+            validation_alias=AliasChoices("hours", "hourly_data"),
+            serialization_alias="hours",
+        ),
+    ]
     battery: BatteryConfig
 
     @model_validator(mode="after")
@@ -154,12 +168,23 @@ class HourlyPlan(StrictModel):
 
 class OptimizeEnergyResponse(StrictModel):
     scenario_id: NonEmptyString
-    interpretations: Annotated[list[DirectiveInterpretation], Field(min_length=1, max_length=3)]
+    interpretations: Annotated[
+        list[DirectiveInterpretation],
+        Field(
+            min_length=1,
+            max_length=3,
+            validation_alias=AliasChoices("directive_interpretation", "interpretations"),
+            serialization_alias="directive_interpretation",
+        ),
+    ]
     hourly_plan: Annotated[list[HourlyPlan], Field(min_length=24, max_length=24)]
     total_grid_kwh: FiniteNonNegative
     total_cost_bdt: FiniteNonNegative
     peak_grid_kwh: FiniteNonNegative
-    summary: NonEmptyString
+    summary: NonEmptyString = Field(
+        validation_alias=AliasChoices("plan_summary", "summary"),
+        serialization_alias="plan_summary",
+    )
 
     @model_validator(mode="after")
     def validate_ordering(self) -> OptimizeEnergyResponse:

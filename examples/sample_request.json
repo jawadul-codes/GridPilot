@@ -5,7 +5,7 @@
     "Do not charge the battery between 6 PM and 8 PM.",
     "The maintenance team will arrive at 9 AM."
   ],
-  "hourly_data": [
+  "hours": [
     {"hour": 0, "demand_kwh": 10, "solar_kwh": 0, "tariff_bdt_per_kwh": 8},
     {"hour": 1, "demand_kwh": 10, "solar_kwh": 0, "tariff_bdt_per_kwh": 8},
     {"hour": 2, "demand_kwh": 10, "solar_kwh": 0, "tariff_bdt_per_kwh": 8},
@@ -35,7 +35,7 @@
     "capacity_kwh": 40,
     "initial_energy_kwh": 20,
     "minimum_energy_kwh": 8,
-    "max_charge_kwh": 5,
-    "max_discharge_kwh": 5
+    "max_charge_kwh_per_hour": 5,
+    "max_discharge_kwh_per_hour": 5
   }
 }
