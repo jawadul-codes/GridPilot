@@ -183,8 +183,10 @@ Deploy the Docker image on any public service that supports environment variable
 
 ### Vercel
 
-Vercel loads the FastAPI application through the explicit `app.main:app`
-entrypoint in `pyproject.toml`. Configure the environment variables from
+Vercel can discover the FastAPI application from the root `index.py` module and
+the explicit `app.main:app` entrypoint in `pyproject.toml`. Runtime dependencies
+are declared in both `pyproject.toml` and `requirements.txt`, and
+`.python-version` pins Python 3.12. Configure the environment variables from
 `.env.example` in the Vercel project settings, redeploy, and test:
 
 ```text
