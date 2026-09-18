@@ -143,25 +143,25 @@ provided at runtime and are excluded from the build context.
 The contest fallback image is published on Docker Hub:
 
 ```text
-closedgates/gridplot:bup-cse-fest-2026
-closedgates/gridplot@sha256:93e47fb732e5b61bcec27cdb55f798f1b2868bf196a87c9474a74fa5d7d78709
+closedgates/gridplot:bup-cse-fest-2026-v2
+closedgates/gridplot@sha256:58cc0aae86cfa82866b663366caee82d260b79ebb4bb3973127d2918111bc08f
 ```
 
 To publish a replacement image before submission, authenticate with Docker Hub,
 then update the tag and digest after a successful push:
 
 ```powershell
-docker tag gridpilot-ai:latest closedgates/gridplot:bup-cse-fest-2026
-docker push closedgates/gridplot:bup-cse-fest-2026
-docker inspect --format='{{index .RepoDigests 0}}' closedgates/gridplot:bup-cse-fest-2026
+docker tag gridpilot-ai:latest closedgates/gridplot:bup-cse-fest-2026-v2
+docker push closedgates/gridplot:bup-cse-fest-2026-v2
+docker inspect --format='{{index .RepoDigests 0}}' closedgates/gridplot:bup-cse-fest-2026-v2
 ```
 
 Record the resulting digest in your submission and keep that image public and
 pullable throughout evaluation. Organizers can run it with:
 
 ```powershell
-docker pull closedgates/gridplot@sha256:93e47fb732e5b61bcec27cdb55f798f1b2868bf196a87c9474a74fa5d7d78709
-docker run --rm -p 8000:8000 --env-file .env closedgates/gridplot@sha256:93e47fb732e5b61bcec27cdb55f798f1b2868bf196a87c9474a74fa5d7d78709
+docker pull closedgates/gridplot@sha256:58cc0aae86cfa82866b663366caee82d260b79ebb4bb3973127d2918111bc08f
+docker run --rm -p 8000:8000 --env-file .env closedgates/gridplot@sha256:58cc0aae86cfa82866b663366caee82d260b79ebb4bb3973127d2918111bc08f
 ```
 
 The required runtime variables are `LLM_API_KEY`, `LLM_MODEL`, `LLM_BASE_URL`,
