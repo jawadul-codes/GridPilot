@@ -16,6 +16,10 @@ POST /optimize-energy
   -> canonical JSON response
 ```
 
+`app/pipeline.py` is the explicit integration boundary between interpretation and
+optimization. It guarantees that model output is guardrailed before optimization
+and that the optimized schedule is replayed before serialization.
+
 The LLM only interprets language. Deterministic code validates its output before
 the optimizer uses it. The returned schedule is replayed independently before it
 is returned.

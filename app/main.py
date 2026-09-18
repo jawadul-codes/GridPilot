@@ -4,11 +4,9 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
-from app.guardrails import validate_interpretations
 from app.interpreter import InterpretationError, interpret_notes
-from app.optimizer import build_schedule, schedule_totals
+from app.pipeline import run_pipeline
 from app.schemas import HealthResponse, OptimizeEnergyRequest, OptimizeEnergyResponse
-from app.validator import validate_schedule
 
 app = FastAPI(title="GridPilot AI", version="0.1.0")
 
@@ -38,22 +36,7 @@ def health() -> HealthResponse:
 def optimize_energy(request: OptimizeEnergyRequest) -> OptimizeEnergyResponse:
     """Interpret notes, optimize the schedule, replay it, and return totals."""
     try:
-        interpretations = interpret_notes(request.operator_notes, request.battery)
-        interpretations = validate_interpretations(
-            request.operator_notes, interpretations, request.battery
-        )
-        plan = build_schedule(request, interpretations)
-        validate_schedule(request, interpretations, plan)
-        total_grid, total_cost, peak_grid = schedule_totals(request, plan)
-        return OptimizeEnergyResponse(
-            scenario_id=request.scenario_id,
-            interpretations=interpretations,
-            hourly_plan=plan,
-            total_grid_kwh=total_grid,
-            total_cost_bdt=total_cost,
-            peak_grid_kwh=peak_grid,
-            summary="Generated a validated minimum-cost 24-hour energy schedule.",
-        )
+        return run_pipeline(request, interpreter=interpret_notes)
     except InterpretationError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
     except ValueError as exc:
